@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte Cimetiere</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { width: 100%; height: 100vh; }
+        .legend {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            line-height: 24px;
+            font-size: 14px;
+        }
+        .legend span {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+    var map = L.map('map').setView([-4.7769, 11.8634], 16);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'OpenStreetMap'
+    }).addTo(map);
+
+    var caveaux = [];
+
+    function getColor(etat) {
+        if (etat === 'disponible') return 'green';
+        if (etat === 'reserve') return 'orange';
+        if (etat === 'occupe') return 'red';
+        return 'gray';
+    }
+
+    function loadCaveaux() {
+        fetch('http://127.0.0.1:8000/api/terrain/caveaux')
+            .then(r => r.json())
+            .then(data => {
+                caveaux.forEach(m => map.removeLayer(m));
+                caveaux = [];
+                data.forEach(c => {
+                    var marker = L.circleMarker([c.latitude, c.longitude], {
+                        radius: 10,
+                        fillColor: getColor(c.etat),
+                        color: 'white',
+                        weight: 2,
+                        opacity: 1,
+                        fillOpacity: 0.9
+                    }).addTo(map);
+                    marker.bindPopup(
+                        '<b>Caveau ' + c.numero + '</b><br>' +
+                        'Etat : ' + c.etat + '<br>' +
+                        'Zone : ' + c.zone_id
+                    );
+                    caveaux.push(marker);
+                });
+            });
+    }
+
+    // Legende
+    var legend = L.control({position: 'bottomright'});
+    legend.onAdd = function() {
+        var div = L.DomUtil.create('div', 'legend');
+        div.innerHTML =
+            '<span style="background:green"></span> Disponible<br>' +
+            '<span style="background:orange"></span> Reserve<br>' +
+            '<span style="background:red"></span> Occupe<br>' +
+            '<span style="background:gray"></span> Non exploitable';
+        return div;
+    };
+    legend.addTo(map);
+
+    loadCaveaux();
+    setInterval(loadCaveaux, 30000);
+</script>
+</body>
+</html>
