@@ -62,10 +62,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'cimetiere_db',
-        'USER': 'cimetiere_user',
-        'PASSWORD': 'motdepasse123',
-        'HOST': 'localhost',
+        'NAME': 'gestion_cimetiere_db',
+        'USER': 'gestion_cimetiere_db_user',
+        'PASSWORD': '9CIpBw58T8RlP5foSqysylfm3LvhOvdn',
+        'HOST': 'dpg-d9l5lgdg1s2s73857mf0-a.oregon-postgres.render.com',
         'PORT': '5432',
     }
 }
