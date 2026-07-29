@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from django.http import FileResponse
+from django.shortcuts import redirect
 from ninja import NinjaAPI
 import os
 
@@ -18,11 +19,20 @@ api.add_router("/reservations/", reservations_router)
 api.add_router("/concessions/", concessions_router)
 api.add_router("/finance/", finance_router)
 
+
 def serve_carte(request):
     html_path = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "components", "carte_widget.html")
+        os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "..",
+            "frontend",
+            "components",
+            "carte_widget.html"
+        )
     )
     return FileResponse(open(html_path, 'rb'))
+
 
 urlpatterns = [
     path("", lambda request: redirect("/carte/")),
