@@ -1,0 +1,10 @@
+django
+django-ninja
+gunicorn
+psycopg2-binary
+django-cors-headers
+pillow
+python-jose
+passlib
+reportlab
+httpx
