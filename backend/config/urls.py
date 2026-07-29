@@ -25,6 +25,7 @@ def serve_carte(request):
     return FileResponse(open(html_path, 'rb'))
 
 urlpatterns = [
+    path("", lambda request: redirect("/carte/")),
     path("admin/", admin.site.urls),
     path("api/", api.urls),
     path("carte/", serve_carte),
