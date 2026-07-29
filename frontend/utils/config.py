@@ -1,0 +1,1 @@
+API_URL = "https://gestion-cimitiere.onrender.com"

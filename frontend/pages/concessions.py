@@ -2,6 +2,8 @@ import flet as ft
 import httpx
 
 
+API_URL = "https://gestion-cimitiere-backend.onrender.com/api"
+
 class ConcessionsPage(ft.View):
     def __init__(self, page: ft.Page, user_data: dict):
         super().__init__(route="/concessions", padding=0)
@@ -85,7 +87,10 @@ class ConcessionsPage(ft.View):
 
     def charger_concessions(self):
         try:
-            res = httpx.get("http://127.0.0.1:8000/api/concessions/", timeout=10)
+            res = httpx.get(
+    f"{API_URL}/concessions/",
+    timeout=30
+)
             self.concessions = res.json()
             self.afficher_concessions()
         except Exception as ex:
@@ -94,7 +99,10 @@ class ConcessionsPage(ft.View):
 
     def charger_exhumations(self):
         try:
-            res = httpx.get("http://127.0.0.1:8000/api/concessions/exhumations", timeout=10)
+            res = httpx.get(
+    f"{API_URL}/concessions/exhumations",
+    timeout=30
+)
             if res.status_code != 200 or not res.text.strip():
                 self.liste.controls.clear()
                 self.liste.controls.append(
@@ -203,7 +211,11 @@ class ConcessionsPage(ft.View):
                     "date_debut": convertir_date(date_debut.value),
                     "date_fin": convertir_date(date_fin.value) if date_fin.value else None,
                 }
-                res = httpx.post("http://127.0.0.1:8000/api/concessions/", json=payload, timeout=10)
+                res = httpx.post(
+    f"{API_URL}/concessions/",
+    json=payload,
+    timeout=30
+)
                 if res.status_code in [200, 201]:
                     self.dialog.open = False
                     self._pg.update()

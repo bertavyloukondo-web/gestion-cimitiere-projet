@@ -1,14 +1,12 @@
 import flet as ft
 import httpx
-
-
+API_URL = "https://gestion-cimitiere-backend.onrender.com/api"
 class LoginPage(ft.View):
     def __init__(self, page: ft.Page, on_success):
         super().__init__(route="/login", padding=0)
         self._pg = page
         self.on_success = on_success
         self.bgcolor = "#1A237E"
-
         self.username = ft.TextField(
             label="Nom d'utilisateur",
             border_color="white",
@@ -35,19 +33,26 @@ class LoginPage(ft.View):
         )
         self.message = ft.Text(color="red", size=13)
         self.btn_login = ft.ElevatedButton(
-            content=ft.Text("Se connecter", color="#1A237E", weight=ft.FontWeight.BOLD),
+            content=ft.Text(
+                "Se connecter",
+                color="#1A237E",
+                weight=ft.FontWeight.BOLD
+            ),
             width=320,
             bgcolor="#FFD700",
             on_click=self.handle_login,
         )
         self.btn_mfa = ft.ElevatedButton(
-            content=ft.Text("Vérifier le code MFA", color="#1A237E", weight=ft.FontWeight.BOLD),
+            content=ft.Text(
+                "Vérifier le code MFA",
+                color="#1A237E",
+                weight=ft.FontWeight.BOLD
+            ),
             width=320,
             bgcolor="#FFD700",
             on_click=self.handle_mfa,
             visible=False,
         )
-
         self.controls = [
             ft.Container(
                 expand=True,
@@ -56,43 +61,61 @@ class LoginPage(ft.View):
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     alignment=ft.MainAxisAlignment.CENTER,
                     controls=[
-                        ft.Icon(ft.Icons.LOCATION_CITY, color="white", size=60),
-                        ft.Text("Gestion de Cimetière", color="white", size=24, weight=ft.FontWeight.BOLD),
-                        ft.Text("Connectez-vous à votre compte", color="white70", size=14),
-                        ft.Divider(color="transparent", height=20),
+                        ft.Icon(
+                            ft.Icons.LOCATION_CITY,
+                            color="white",
+                            size=60
+                        ),
+                        ft.Text(
+                            "Gestion de Cimetière",
+                            color="white",
+                            size=24,
+                            weight=ft.FontWeight.BOLD
+                        ),
+                        ft.Text(
+                            "Connectez-vous à votre compte",
+                            color="white70",
+                            size=14
+                        ),
+                        ft.Divider(
+                            height=20,
+                            color="transparent"
+                        ),
                         self.username,
                         self.password,
                         self.mfa_code,
                         self.message,
                         self.btn_login,
                         self.btn_mfa,
-                        ft.Divider(height=15, color="transparent"),
                         ft.TextButton(
-                            content=ft.Text("Créer un compte", color="white"),
+                            content=ft.Text(
+                                "Créer un compte",
+                                color="white"
+                            ),
                             on_click=self.go_to_inscription,
                         ),
-                    ]
-                )
+                    ],
+                ),
             )
         ]
-
     def handle_login(self, e):
         self.message.value = ""
         try:
             res = httpx.post(
-                "http://127.0.0.1:8000/api/users/login",
+                f"{API_URL}/users/login",
                 json={
                     "username": self.username.value,
                     "password": self.password.value,
                 },
-                timeout=10
+                timeout=30,
             )
             if res.status_code == 200:
                 data = res.json()
                 if "error" in data:
                     self.message.value = data["error"]
+                    self.message.color = "red"
                 else:
-                    self.message.value = f"Code MFA envoyé sur votre email !"
+                    self.message.value = "Code MFA envoyé."
                     self.message.color = "green"
                     self.mfa_code.visible = True
                     self.btn_mfa.visible = True
@@ -100,18 +123,17 @@ class LoginPage(ft.View):
             else:
                 self.message.value = f"Erreur serveur : {res.status_code}"
         except Exception as ex:
-            self.message.value = f"Erreur : {ex}"
+            self.message.value = f"Erreur connexion API : {ex}"
         self._pg.update()
-
     def handle_mfa(self, e):
         try:
             res = httpx.post(
-                "http://127.0.0.1:8000/api/users/verify-mfa",
+                f"{API_URL}/users/verify-mfa",
                 json={
                     "username": self.username.value,
                     "mfa_code": self.mfa_code.value,
                 },
-                timeout=10
+                timeout=30,
             )
             if res.status_code == 200:
                 data = res.json()
@@ -123,8 +145,7 @@ class LoginPage(ft.View):
             else:
                 self.message.value = f"Erreur serveur : {res.status_code}"
         except Exception as ex:
-            self.message.value = f"Erreur : {ex}"
+            self.message.value = f"Erreur connexion API : {ex}"
         self._pg.update()
-
     def go_to_inscription(self, e):
         self._pg.go("/inscription")

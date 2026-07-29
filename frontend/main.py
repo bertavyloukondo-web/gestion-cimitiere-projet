@@ -1,3 +1,4 @@
+import os
 import flet as ft
 from pages.login import LoginPage
 from pages.dashboard import DashboardPage
@@ -12,6 +13,7 @@ from pages.comptabilite import ComptabilitePage
 
 user_data_global = {}
 
+
 def main(page: ft.Page):
     page.title = "Gestion de Cimetière"
     page.theme_mode = ft.ThemeMode.LIGHT
@@ -25,31 +27,61 @@ def main(page: ft.Page):
         else:
             page.theme_mode = ft.ThemeMode.LIGHT
             page.bgcolor = "#F5F5F5"
+
         page.update()
         route_change(None)
 
     def route_change(e):
         page.views.clear()
+
         if page.route == "/" or page.route == "/login":
             page.views.append(LoginPage(page, go_to_dashboard))
+
         elif page.route == "/dashboard":
-            page.views.append(DashboardPage(page, user_data_global, toggle_theme))
+            page.views.append(
+                DashboardPage(page, user_data_global, toggle_theme)
+            )
+
         elif page.route == "/carte":
-            page.views.append(CartePage(page, user_data_global))
+            page.views.append(
+                CartePage(page, user_data_global)
+            )
+
         elif page.route == "/reservations":
-            page.views.append(ReservationsPage(page, user_data_global))
+            page.views.append(
+                ReservationsPage(page, user_data_global)
+            )
+
         elif page.route == "/nouvelle_reservation":
-            page.views.append(NouvelleReservationPage(page, user_data_global))
+            page.views.append(
+                NouvelleReservationPage(page, user_data_global)
+            )
+
         elif page.route == "/finance":
-            page.views.append(FinancePage(page, user_data_global))
+            page.views.append(
+                FinancePage(page, user_data_global)
+            )
+
         elif page.route == "/utilisateurs":
-            page.views.append(UtilisateursPage(page, user_data_global))
+            page.views.append(
+                UtilisateursPage(page, user_data_global)
+            )
+
         elif page.route == "/concessions":
-            page.views.append(ConcessionsPage(page, user_data_global))
+            page.views.append(
+                ConcessionsPage(page, user_data_global)
+            )
+
         elif page.route == "/inscription":
-            page.views.append(InscriptionPage(page))
+            page.views.append(
+                InscriptionPage(page)
+            )
+
         elif page.route == "/comptabilite":
-            page.views.append(ComptabilitePage(page, user_data_global))
+            page.views.append(
+                ComptabilitePage(page, user_data_global)
+            )
+
         page.update()
 
     def go_to_dashboard(user_data):
@@ -60,4 +92,10 @@ def main(page: ft.Page):
     page.go("/login")
 
 
-ft.run(main)
+# Lancement Render
+ft.app(
+    target=main,
+    view=ft.AppView.WEB_SERVER,
+    host="0.0.0.0",
+    port=int(os.environ.get("PORT", 8550)),
+)

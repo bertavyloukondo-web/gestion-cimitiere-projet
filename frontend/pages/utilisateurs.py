@@ -2,6 +2,9 @@ import flet as ft
 import httpx
 
 
+API_URL = "https://gestion-cimitiere-backend.onrender.com/api"
+
+
 class UtilisateursPage(ft.View):
     def __init__(self, page: ft.Page, user_data: dict):
         super().__init__(route="/utilisateurs", padding=0)
@@ -65,7 +68,10 @@ class UtilisateursPage(ft.View):
 
     def charger_utilisateurs(self):
         try:
-            res = httpx.get("http://127.0.0.1:8000/api/users/list", timeout=10)
+            res = httpx.get(
+    f"{API_URL}/users/list",
+    timeout=30
+)
             self.utilisateurs = res.json()
             self.afficher_utilisateurs()
         except Exception as ex:
@@ -187,7 +193,10 @@ class UtilisateursPage(ft.View):
 
     def approuver(self, user_id):
         try:
-            httpx.put(f"http://127.0.0.1:8000/api/users/{user_id}/approuver", timeout=10)
+            httpx.put(
+    f"{API_URL}/users/{user_id}/approuver",
+    timeout=30
+)
             self.charger_utilisateurs()
         except Exception as ex:
             self.message.value = f"Erreur : {ex}"
@@ -195,7 +204,10 @@ class UtilisateursPage(ft.View):
 
     def refuser_compte(self, user_id):
         try:
-            httpx.put(f"http://127.0.0.1:8000/api/users/{user_id}/refuser", timeout=10)
+            httpx.put(
+    f"{API_URL}/users/{user_id}/refuser",
+    timeout=30
+)
             self.charger_utilisateurs()
         except Exception as ex:
             self.message.value = f"Erreur : {ex}"
@@ -209,16 +221,16 @@ class UtilisateursPage(ft.View):
                 return
             try:
                 httpx.post(
-                    "http://127.0.0.1:8000/api/users/register",
-                    json={
-                        "username": username.value,
-                        "email": email.value,
-                        "password": password.value,
-                        "role": role.value or "client",
-                        "phone": phone.value,
-                    },
-                    timeout=10
-                )
+    f"{API_URL}/users/register",
+    json={
+        "username": username.value,
+        "email": email.value,
+        "password": password.value,
+        "role": role.value or "client",
+        "phone": phone.value,
+    },
+    timeout=30
+)
                 dlg.open = False
                 self._pg.update()
                 self.charger_utilisateurs()

@@ -2,6 +2,9 @@ import flet as ft
 import httpx
 
 
+API_URL = "https://gestion-cimitiere-backend.onrender.com/api"
+
+
 class ReservationsPage(ft.View):
     def __init__(self, page: ft.Page, user_data: dict):
         super().__init__(route="/reservations", padding=0)
@@ -93,10 +96,10 @@ class ReservationsPage(ft.View):
     def charger_reservations(self, statut=None):
         self.statut_actuel = statut
         try:
-            url = "http://127.0.0.1:8000/api/reservations/"
+            url = f"{API_URL}/reservations/"
             if statut:
                 url += f"?statut={statut}"
-            res = httpx.get(url, timeout=10)
+            res = httpx.get(url, timeout=30)
             self.reservations = res.json()
             self.afficher_reservations()
         except Exception as ex:
@@ -202,10 +205,10 @@ class ReservationsPage(ft.View):
     def valider(self, reservation_id):
         try:
             httpx.put(
-                f"http://127.0.0.1:8000/api/reservations/{reservation_id}/valider",
-                params={"admin_id": self.user.get("user_id", 1)},
-                timeout=10
-            )
+    f"{API_URL}/reservations/{reservation_id}/valider",
+    params={"admin_id": self.user.get("user_id", 1)},
+    timeout=30
+)
             self.charger_reservations(self.statut_actuel)
         except Exception as ex:
             self.message.value = f"Erreur : {ex}"
@@ -214,9 +217,9 @@ class ReservationsPage(ft.View):
     def refuser(self, reservation_id):
         try:
             httpx.put(
-                f"http://127.0.0.1:8000/api/reservations/{reservation_id}/refuser",
-                timeout=10
-            )
+    f"{API_URL}/reservations/{reservation_id}/refuser",
+    timeout=30
+)
             self.charger_reservations(self.statut_actuel)
         except Exception as ex:
             self.message.value = f"Erreur : {ex}"

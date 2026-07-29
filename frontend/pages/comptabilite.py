@@ -99,7 +99,7 @@ class ComptabilitePage(ft.View):
 
     def charger_paiements(self, mode=None):
         try:
-            url = "http://127.0.0.1:8000/api/finance/paiements"
+            url = "https://gestion-cimitiere-backend.onrender.com/api/finance/paiements"
             if mode:
                 url += f"?mode_paiement={mode}"
             res = httpx.get(url, timeout=10)
@@ -184,7 +184,7 @@ class ComptabilitePage(ft.View):
 
     def exporter_excel(self, e):
         try:
-            webbrowser.open("http://127.0.0.1:8000/api/finance/export-excel")
+            webbrowser.open("https://gestion-cimitiere-backend.onrender.com/api/finance/export-excel")
         except Exception as ex:
             self.message.value = f"Erreur export : {ex}"
             self._pg.update()
