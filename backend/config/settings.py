@@ -65,7 +65,7 @@ DATABASES = {
         'NAME': 'gestion_cimetiere_db',
         'USER': 'gestion_cimetiere_db_user',
         'PASSWORD': '9CIpBw58T8RlP5foSqysylfm3LvhOvdn',
-        'HOST': 'dpg-d9l5lgdg1s2s73857mf0-a.oregon-postgres.render.com',
+        'HOST': 'dpg-d9l5lgdg1s2s73857mf0-a',
         'PORT': '5432',
     }
 }
